@@ -1,11 +1,11 @@
-
-import { Table } from "./components/Table"
+import { Search } from "./components/Search"
+import { TableWithSearch } from "./components/Table"
 function App() {
  
 
   return (
     <>
-      <Table/>
+      <TableWithSearch/>
     </>
   )
 }

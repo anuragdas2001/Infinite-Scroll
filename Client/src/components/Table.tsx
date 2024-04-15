@@ -1,63 +1,80 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
+export const TableWithSearch = () => {
+  const [search, setSearch] = useState("");
+  const [data, setData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
 
-interface Data {
-  city: number;
-  country: string;
-  timezone: number;
-}
-// const data: Data[] = [
-//   {
-//     city: 1,
-//     country: "India",
-//     timezone: 46000,
-//   },
-//   {
-//     city: 1,
-//     country: "US",
-//     timezone: 46000,
-//   },
-//   {
-//     city: 1,
-//     country: "Australia",
-//     timezone: 46000,
-//   },
-// ];
-// city,country,Timezone
-
-
-export const Table = () => {
-  const [data, setData] = useState<Data[]>([]);
   useEffect(() => {
-    const Fetchdata = axios
-      .get(
-        "https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/geonames-all-cities-with-a-population-1000/records?limit=20&timezone=Asia%2FKolkata"
-      )
-      .then((response) => {
-        setData(response.data)
-        console.log(response.data);
-      })
-      .catch((error) => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          "https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/geonames-all-cities-with-a-population-1000/records?limit=20&timezone=Asia%2FKolkata"
+        );
+        setData(response.data.results);
+      } catch (error) {
         console.error("Error fetching data:", error);
-      });
+      }
+    };
+
+    fetchData();
   }, []);
 
-  console.log(data);
- 
-   
-    console.log(data);
+  useEffect(() => {
+    setFilteredData(
+      data.filter((dt) =>
+        dt.ascii_name.toLowerCase().includes(search.toLowerCase())
+      )
+    );
+  }, [search, data]);
+
+  const handleInputChange = (event) => {
+    setSearch(event.target.value);
+  };
+
   return (
-    <>
-     <table className="border-4 border-black">
-      <thead>
-        <tr>
-          <td>City name</td>
-          <td>Country</td>
-          <td>Timezone</td>
-        </tr>
-      </thead>
-     </table>
-    </>
+    <div>
+      <input
+        type="text"
+        placeholder="Search for a city..."
+        value={search}
+        onChange={handleInputChange}
+        className="h-10 w-full m-10"
+      />
+
+      <div className="border-4 border-black m-10 p-10">
+        <table className="min-w-full divide-y divide-gray-200 ">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="-ms-10 py-10 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                City Name
+              </th>
+              <th className="px-10 py-10 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Country
+              </th>
+              <th className="px-10 py-10 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Timezone
+              </th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {filteredData.map((row, index) => (
+              <tr key={index}>
+                <td className="px-10 py-10 whitespace-nowrap">
+                  {row.ascii_name}
+                </td>
+                <td className="px-10 py-10 whitespace-nowrap">
+                  {row.cou_name_en}
+                </td>
+                <td className="px-10 py-10 whitespace-nowrap">
+                  {row.timezone}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 };
