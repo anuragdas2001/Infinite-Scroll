@@ -1,58 +1,69 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useState, useEffect } from "react";
+import Autosuggest from "react-autosuggest";
 
-export const Search = ({ onSearch }) => {
-  const [query, setQuery] = useState("");
+const SearchComponent = ({ data, onSearch }) => {
+  const [search, setSearch] = useState("");
   const [suggestions, setSuggestions] = useState([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          `https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/geonames-all-cities-with-a-population-1000/records?q=${query}&limit=5&timezone=Asia%2FKolkata`
+  const getSuggestions = (value) => {
+    const inputValue = value.trim().toLowerCase();
+    const inputLength = inputValue.length;
+
+    return inputLength === 0
+      ? []
+      : data.filter(
+          (dt) =>
+            dt.ascii_name.toLowerCase().slice(0, inputLength) === inputValue
         );
-        setSuggestions(response.data.results);
-      } catch (error) {
-        console.error("Error fetching suggestions:", error);
-      }
-    };
-
-    if (query.trim() !== "") {
-      fetchData();
-    } else {
-      setSuggestions([]);
-    }
-  }, [query]);
-
-  const handleInputChange = (event) => {
-    setQuery(event.target.value);
-    onSearch(event.target.value);
   };
 
-  const handleSuggestionClick = (suggestion) => {
-    setQuery(suggestion.city);
+  const onSuggestionsFetchRequested = ({ value }) => {
+    setSuggestions(getSuggestions(value));
+  };
+
+  const onSuggestionsClearRequested = () => {
     setSuggestions([]);
-    onSearch(suggestion.city);
+  };
+
+  const getSuggestionValue = (suggestion) => suggestion.ascii_name;
+
+  const renderSuggestion = (suggestion) => (
+    <div className="text-left bg-slate-300 p-1 rounded-sm opacity-100 hover:bg-teal-400">
+      {suggestion.ascii_name}
+    </div>
+  );
+
+  const onChange = (event, { newValue }) => {
+    setSearch(newValue);
+    onSearch(newValue);
+  };
+
+  const onSuggestionSelected = (event, { suggestion }) => {
+    setSearch(suggestion.ascii_name);
+    onSearch(suggestion.ascii_name);
+  };
+
+  const inputProps = {
+    placeholder: "Search for a city...",
+    value: search,
+    onChange: onChange,
+    className:
+      "w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500",
   };
 
   return (
-    <div>
-      <input
-        type="text"
-        placeholder="Search for a city..."
-        value={query}
-        onChange={handleInputChange}
-        className="h-10 w-full m-10 p-5"
+    <div className="relative h-10">
+      <Autosuggest
+        suggestions={suggestions}
+        onSuggestionsFetchRequested={onSuggestionsFetchRequested}
+        onSuggestionsClearRequested={onSuggestionsClearRequested}
+        getSuggestionValue={getSuggestionValue}
+        renderSuggestion={renderSuggestion}
+        inputProps={inputProps}
+        onSuggestionSelected={onSuggestionSelected}
+        className="absolute top-10 z-10 w-full border-2 border-blue-600 rounded-md"
       />
-      {suggestions.length > 0 && (
-        <ul>
-          {suggestions.map((suggestion, index) => (
-            <li key={index} onClick={() => handleSuggestionClick(suggestion)}>
-              {suggestion.city}, {suggestion.country}
-            </li>
-          ))}
-        </ul>
-      )}
     </div>
   );
 };
+export default SearchComponent;
