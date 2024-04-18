@@ -12,7 +12,7 @@ export const TableWithSearch = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/geonames-all-cities-with-a-population-1000/records"
+          "https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/geonames-all-cities-with-a-population-1000/records?limit=50&timezone=Asia%2FKolkata"
         );
         setData(response.data.results);
         setFilteredData(response.data.results);
@@ -35,45 +35,51 @@ export const TableWithSearch = () => {
   const handleSearch = (searchTerm) => {
     setSearch(searchTerm);
   };
-  console.log(data);
+console.log(data)
   return (
     <>
-      <div className="container mx-auto p-4">
-        <SearchComponent data={data} onSearch={handleSearch} />
-        <table className="min-w-full divide-y mt-20 divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                City
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Country
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Timezone
-              </th>
-            </tr>
-          </thead>
+     <div className="container mx-auto p-4">
+      <SearchComponent data={data} onSearch={handleSearch} />
+      <table className="min-w-full divide-y mt-20 divide-gray-200">
+        <thead className="bg-gray-50">
+          <tr>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Index
+            </th> <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              City
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Country
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Timezone
+            </th>
+          </tr>
+        </thead>
 
-          <tbody className="bg-white divide-y divide-gray-200">
-            {filteredData.map((row, index) => (
-              <tr key={index}>
+        <tbody className="bg-white divide-y divide-gray-200">
+          {filteredData.map((row, index) => (
+        
+            <tr key={index}>
+                <td className="px-6 py-4 whitespace-nowrap">{index+1}</td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <Link to={`/weather/${row.ascii_name}`}>
-                    {row.ascii_name}
-                  </Link>
-                </td>
+                <Link to={`/weather/${row.ascii_name}`}>{row.ascii_name}</Link>
+              </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   {row.cou_name_en}
                 </td>
-
                 <td className="px-6 py-4 whitespace-nowrap">{row.timezone}</td>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      {/* <Outlet/> */}
+           
+             
+           
+          ))}
+        </tbody>
+      </table>
+    </div>
+    {/* <Outlet/> */}
+    
     </>
+   
   );
 };
