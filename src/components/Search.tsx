@@ -1,23 +1,23 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import Autosuggest from "react-autosuggest";
 
-const SearchComponent = ({ data, onSearch }) => {
+const SearchComponent = ({ data, onSearch }:any) => {
   const [search, setSearch] = useState("");
   const [suggestions, setSuggestions] = useState([]);
 
-  const getSuggestions = (value) => {
+  const getSuggestions = (value:any) => {
     const inputValue = value.trim().toLowerCase();
     const inputLength = inputValue.length;
 
     return inputLength === 0
       ? []
       : data.filter(
-          (dt) =>
+          (dt:string) =>
             dt.ascii_name.toLowerCase().slice(0, inputLength) === inputValue
         );
   };
 
-  const onSuggestionsFetchRequested = ({ value }) => {
+  const onSuggestionsFetchRequested = ({ value }:any) => {
     setSuggestions(getSuggestions(value));
   };
 
@@ -25,20 +25,20 @@ const SearchComponent = ({ data, onSearch }) => {
     setSuggestions([]);
   };
 
-  const getSuggestionValue = (suggestion) => suggestion.ascii_name;
+  const getSuggestionValue = (suggestion:string) => suggestion.ascii_name;
 
-  const renderSuggestion = (suggestion) => (
+  const renderSuggestion = (suggestion:string) => (
     <div className="text-left bg-slate-300 p-1 rounded-sm opacity-100 hover:bg-teal-400">
       {suggestion.ascii_name}
     </div>
   );
 
-  const onChange = (event, { newValue }) => {
+  const onChange = ({ newValue }:any) => {
     setSearch(newValue);
     onSearch(newValue);
   };
 
-  const onSuggestionSelected = (event, { suggestion }) => {
+  const onSuggestionSelected = ({ suggestion }:any) => {
     setSearch(suggestion.ascii_name);
     onSearch(suggestion.ascii_name);
   };

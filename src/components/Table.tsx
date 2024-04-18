@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import axios from "axios";
 import SearchComponent from "./Search";
 import { Link } from "react-router-dom";
-import { Outlet } from "react-router-dom";
 export const TableWithSearch = () => {
   const [search, setSearch] = useState("");
   const [data, setData] = useState([]);
@@ -32,7 +31,7 @@ export const TableWithSearch = () => {
     );
   }, [search, data]);
 
-  const handleSearch = (searchTerm) => {
+  const handleSearch = (searchTerm:string) => {
     setSearch(searchTerm);
   };
 console.log(data)
@@ -77,7 +76,7 @@ console.log(data)
         </tbody>
       </table>
     </div>
-    {/* <Outlet/> */}
+    
     
     </>
    
