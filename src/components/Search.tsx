@@ -1,23 +1,31 @@
 import { useState } from "react";
 import Autosuggest from "react-autosuggest";
 
-const SearchComponent = ({ data, onSearch }:any) => {
-  const [search, setSearch] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
+interface CityData {
+  ascii_name: string;
+}
 
-  const getSuggestions = (value:any) => {
+interface SearchProps {
+  data: CityData[];
+  onSearch: (searchTerm: string) => void;
+}
+
+const SearchComponent: React.FC<SearchProps> = ({ data, onSearch }) => {
+  const [search, setSearch] = useState<string>("");
+  const [suggestions, setSuggestions] = useState<CityData[]>([]);
+
+  const getSuggestions = (value: string) => {
     const inputValue = value.trim().toLowerCase();
     const inputLength = inputValue.length;
 
     return inputLength === 0
       ? []
       : data.filter(
-          (dt:string) =>
-            dt.ascii_name.toLowerCase().slice(0, inputLength) === inputValue
+          (dt) => dt.ascii_name.toLowerCase().slice(0, inputLength) === inputValue
         );
   };
 
-  const onSuggestionsFetchRequested = ({ value }:any) => {
+  const onSuggestionsFetchRequested = ({ value }: any) => {
     setSuggestions(getSuggestions(value));
   };
 
@@ -25,20 +33,20 @@ const SearchComponent = ({ data, onSearch }:any) => {
     setSuggestions([]);
   };
 
-  const getSuggestionValue = (suggestion:string) => suggestion.ascii_name;
+  const getSuggestionValue = (suggestion: CityData) => suggestion.ascii_name;
 
-  const renderSuggestion = (suggestion:string) => (
+  const renderSuggestion = (suggestion: CityData) => (
     <div className="text-left bg-slate-300 p-1 rounded-sm opacity-100 hover:bg-teal-400">
       {suggestion.ascii_name}
     </div>
   );
 
-  const onChange = ({ newValue }:any) => {
+  const onChange = ({ newValue }: any) => {
     setSearch(newValue);
     onSearch(newValue);
   };
 
-  const onSuggestionSelected = ({ suggestion }:any) => {
+  const onSuggestionSelected = ({ suggestion }: any) => {
     setSearch(suggestion.ascii_name);
     onSearch(suggestion.ascii_name);
   };
@@ -61,9 +69,10 @@ const SearchComponent = ({ data, onSearch }:any) => {
         renderSuggestion={renderSuggestion}
         inputProps={inputProps}
         onSuggestionSelected={onSuggestionSelected}
-        className="absolute top-10 z-10 w-full border-2 border-blue-600 rounded-md"
+        
       />
     </div>
   );
 };
+
 export default SearchComponent;
