@@ -40,6 +40,7 @@ export const Weather: React.FC = () => {
     fetchWeather();
   }, [cityname]);
 
+  console.log(weather)
   useEffect(() => {
     if (weather?.main) {
       if (unit === "celsius") {
@@ -79,7 +80,7 @@ export const Weather: React.FC = () => {
 
   const currentDate = new Date().toDateString();
 
-  console.log()
+  console.log(icon)
   return (
     <>
       <div className="m-5 flex  justify-center">
@@ -100,7 +101,7 @@ export const Weather: React.FC = () => {
           <div className="text-sm text-gray-500">{currentDate}</div>
           <div className="mt-6 text-6xl self-center inline-flex items-center justify-center rounded-lg text-indigo-400 h-24 w-24">
             <img
-              src={`https://openweathermap.org/img/wn/${icon}.png`}
+              src={`https://openweathermap.org/img/wn/${icon}@2x.png`}
               alt="Weather Icon"
             />
           </div>
